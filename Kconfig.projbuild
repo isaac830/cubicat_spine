@@ -1,0 +1,22 @@
+menu "Spine Version"
+	choice SPINE_VERSION
+        prompt "Spine version."
+        default SPINE_VERSION_38
+        help
+            Spine runtime version to be used. Only support version 3.8 to 4.2
+
+        config SPINE_VERSION_38
+            bool "Spine 3.8"
+        config SPINE_VERSION_40
+            bool "Spine 4.0"
+        config SPINE_VERSION_42
+            bool "Spine 4.2"
+    endchoice
+
+    config SPINE_VERSION
+        int
+        default 38 if SPINE_VERSION_38
+        default 40 if SPINE_VERSION_40
+        default 42 if SPINE_VERSION_42
+        
+endmenu
