@@ -288,15 +288,15 @@ void SpineNode::updateMesh() {
         }
     }
 }
-void SpineNode::scale(float x, float y) {
+void SpineNode::setScale(const Vector2f& scale) {
     if (m_pSkeleton) {
-        m_pSkeleton->setScaleX(x);
-        m_pSkeleton->setScaleY(y);
+        m_pSkeleton->setScaleX(scale.x);
+        m_pSkeleton->setScaleY(scale.y);
     }
 }
-void SpineNode::position(float x, float y) {
+void SpineNode::setPosition(const Vector2f& pos) {
     if (m_pSkeleton) {
-        m_pSkeleton->setPosition(x, y);
+        m_pSkeleton->setPosition(pos.x, pos.y);
     }
 }
 const std::vector<std::string>& SpineNode::getAnimationNames() {

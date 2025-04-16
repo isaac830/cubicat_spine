@@ -32,10 +32,8 @@ public:
     TrackEntry* setAnimation(int trackIndex, int animIndex, bool loop);
     TrackEntry* addAnimation(int trackIndex, int animIndex, bool loop, float delay = 0.0f);
     // [JS_BINDING_BEGIN]
-    void setScale(const Vector2f& scale) = delete;
-    void setPosition(const Vector2f& pos) = delete;
-    void scale(float x, float y);
-    void position(float x, float y);
+    void setScale(const Vector2f& scale);
+    void setPosition(const Vector2f& pos);
     void useBilinearFilter(bool b);
     // [JS_BINDING_END]
     const std::vector<std::string>& getAnimationNames();
