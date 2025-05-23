@@ -281,10 +281,17 @@ def api_binding_generator(header_path: str, header_excludes: list, js_out_path: 
             js_file.write('};\n')
 
 
-if __name__ == '__main__':
+def main():
     js_out_path = '../../../spiffs_img'
+    absolute_path = os.path.abspath(js_out_path)
+    if not os.path.exists(absolute_path):
+        print(f"Javascript output path: {absolute_path} not exist, JS Binding export abort.")
+        return
     # export spine library
     header_path = '../cubicat-port'
     header_excludes = ['../dist']
     cpp_out_path = '../js_binding'
     api_binding_generator(header_path, header_excludes, js_out_path, cpp_out_path, 'spine_api', 'spine')
+
+if __name__ == '__main__':
+    main()

@@ -6,6 +6,22 @@
 GetImageDataInMemory CubicatTextureLoader::m_pGetImageInMemory = nullptr;
 ResLocation CubicatTextureLoader::m_eResLocation = MEMORY;
 
+png_voidp
+PNGCBAPI png_spine_malloc(png_structp png_ptr, png_alloc_size_t size)
+{
+    if (size == 0)
+      return (NULL);
+    return (png_voidp)psram_prefered_malloc(size);
+}
+
+/* Free a pointer.  It is removed from the list at the same time. */
+void PNGCBAPI
+png_spine_free(png_structp png_ptr, png_voidp ptr)
+{
+   free(ptr);
+   ptr = NULL;
+}
+
 void CubicatTextureLoader::init(ResLocation location, GetImageDataInMemory getImageInMemory) {
     m_pGetImageInMemory = getImageInMemory;
     m_eResLocation = location;
@@ -44,7 +60,7 @@ void CubicatTextureLoader::unload(void *texture) {
 }
 
 void CubicatTextureLoader::loadPNG(AtlasPage &page, const char* path) {
-    png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+    png_structp png = png_create_read_struct_2(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr, nullptr, png_spine_malloc, png_spine_free);
     if (!png) {
         return;
     }

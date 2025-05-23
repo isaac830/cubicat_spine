@@ -1,5 +1,5 @@
 dependencies:
-  isaac830/cubicat_s3: "^1.0.3"
+  isaac830/cubicat_s3: "^1.0.9"
   idf:
     version: '>=5.3.0'
 description: Spine interface for Cubicat S3 device
@@ -9,4 +9,4 @@ files:
   - .git
 license: MIT
 url: https://github.com/isaac830/cubicat_spine.git
-version: 1.0.5
+version: 1.0.6
