@@ -64,15 +64,13 @@ bool nothingToDraw(Slot &slot, int startSlotIndex, int endSlotIndex) {
         auto page = atlasRegion->page; \
         if (page->texturePath.length() > 0) { \
             auto it = m_textureMap.find(page->texturePath.buffer()); \
-            TexturePtr texture; \
-            if (it != m_textureMap.end()) { \
-                texture = it->second; \
-            } else { \
-                texture = SharedPtr<Texture>((Texture*)page->getRendererObject()); \
-                if (texture) \
+            if (it == m_textureMap.end()) { \
+                TexturePtr texture = SharedPtr<Texture>((Texture*)page->getRendererObject()); \
+                if (texture) { \
                     m_textureMap[page->texturePath.buffer()] = texture; \
+                } \
             } \
-            poly->getMaterial()->setTexture(texture); \
+            poly->getMaterial()->setTexture(m_textureMap[page->texturePath.buffer()]); \
         } \
     }
 #else
@@ -83,15 +81,12 @@ bool nothingToDraw(Slot &slot, int startSlotIndex, int endSlotIndex) {
         auto page = atlasRegion->page; \
         if (page->texturePath.length() > 0) { \
             auto it = m_textureMap.find(page->texturePath.buffer()); \
-            TexturePtr texture; \
-            if (it != m_textureMap.end()) { \
-                texture = it->second; \
-            } else { \
-                texture = SharedPtr<Texture>((Texture*)page->texture); \
+            if (it == m_textureMap.end()) { \
+                TexturePtr texture = SharedPtr<Texture>((Texture*)page->texture); \
                 if (texture) \
                     m_textureMap[page->texturePath.buffer()] = texture; \
             } \
-            poly->setTexture(texture); \
+            poly->getMaterial()->setTexture(m_textureMap[page->texturePath.buffer()]); \
         } \
     }
 #endif
@@ -102,18 +97,7 @@ SpineNode::SpineNode() {
 }
 
 SpineNode::~SpineNode() {
-    if (m_pSkeleton)
-        delete m_pSkeleton;
-    if (m_pAnimState) {
-        delete m_pAnimState->getData();
-        delete m_pAnimState;
-    }
-    if (m_pClipper)
-        delete m_pClipper;
-    if (m_pAttachmentLoader)
-        delete m_pAttachmentLoader;
-    if (m_pAtlas)
-        delete m_pAtlas;
+    unload();
 }
 
 SpineNode* SpineNode::createSpine() {
@@ -121,6 +105,7 @@ SpineNode* SpineNode::createSpine() {
 }
 
 void SpineNode::loadWithBinaryFile(const std::string &skeletonBinaryFile, const std::string &atlasFile, float scale) {
+    unload();
     m_pAtlas = new Atlas(atlasFile.c_str(), &m_sTextureLoader, true);
     m_pAttachmentLoader = new AtlasAttachmentLoader(m_pAtlas);
 
@@ -133,6 +118,32 @@ void SpineNode::loadWithBinaryFile(const std::string &skeletonBinaryFile, const 
     }
     m_pSkeleton = new Skeleton(skeletonData);
     initialize();
+}
+void SpineNode::unload() {
+    clearDrawables();
+    m_textureMap.clear();
+    if (m_pSkeleton) {
+        delete m_pSkeleton->getData();
+        delete m_pSkeleton;
+        m_pSkeleton = nullptr;
+    }
+    if (m_pAnimState) {
+        delete m_pAnimState->getData();
+        delete m_pAnimState;
+        m_pAnimState = nullptr;
+    }
+    if (m_pClipper) {
+        delete m_pClipper;
+        m_pClipper = nullptr;
+    }
+    if (m_pAttachmentLoader) {
+        delete m_pAttachmentLoader;
+        m_pAttachmentLoader = nullptr;
+    }
+    if (m_pAtlas) {
+        delete m_pAtlas;
+        m_pAtlas = nullptr;
+    }
 }
 void SpineNode::initialize() {
     m_pClipper = new SkeletonClipping();
@@ -295,9 +306,7 @@ void SpineNode::setScale(const Vector2f& scale) {
     }
 }
 void SpineNode::setPosition(const Vector2f& pos) {
-    if (m_pSkeleton) {
-        m_pSkeleton->setPosition(pos.x, pos.y);
-    }
+    Node2D::setPosition(pos);
 }
 const std::vector<std::string>& SpineNode::getAnimationNames() {
     return m_vAnimationNames;

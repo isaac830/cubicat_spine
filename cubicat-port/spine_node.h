@@ -23,6 +23,7 @@ public:
     // [JS_BINDING_BEGIN]
     static SpineNode* createSpine();
     void loadWithBinaryFile(const std::string &skeletonBinaryFile, const std::string &atlasFile, float scale = 1.0f);
+    void unload();
     void setSkinByName(const std::string &skinName);
     void setSkinByIndex(int idx);
     TrackEntry* setAnimation(int trackIndex, const std::string &name, bool loop);
@@ -36,6 +37,7 @@ public:
     void setPosition(const Vector2f& pos);
     void useBilinearFilter(bool b);
     // [JS_BINDING_END]
+    
     const std::vector<std::string>& getAnimationNames();
 private:
     SpineNode();

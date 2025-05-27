@@ -54,9 +54,7 @@ void CubicatTextureLoader::load(AtlasPage &page, const String &path) {
     }
 }
 void CubicatTextureLoader::unload(void *texture) {
-    if (texture) {
-		free(texture);
-	}
+    // Texture managed by cubicat engine, do nothing
 }
 
 void CubicatTextureLoader::loadPNG(AtlasPage &page, const char* path) {
